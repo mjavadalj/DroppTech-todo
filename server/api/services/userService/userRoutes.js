@@ -1,7 +1,5 @@
 const router = require("express").Router();
 const userController = require("./userController");
-const DBService = require("../DBService");
-const jwt = require("jsonwebtoken");
 const passport = require("passport");
 
 const validation = require("../../Middlewares/userServiceValidations");

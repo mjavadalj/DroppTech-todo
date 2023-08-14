@@ -21,9 +21,9 @@ const DBConnection = async () => {
 };
 
 const BuildRelations = () => {
-	User = require("./userService/userModel");
-	TodoList = require("./userService/todoListModel");
-	Todo = require("./userService/todoModel");
+	User = require("./userService/models/userModel");
+	TodoList = require("./userService/models/todoListModel");
+	Todo = require("./userService/models/todoModel");
 
 	User.hasOne(TodoList, {
 		foreignKey: "username",
