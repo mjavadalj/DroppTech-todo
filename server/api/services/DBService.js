@@ -31,7 +31,18 @@ const BuildRelations = () => {
 		onDelete: "CASCADE",
 	});
 	TodoList.belongsTo(User, { onDelete: "CASCADE" });
-	TodoList.hasMany(Todo, { foreignKey: "id", as: "List", onDelete: "CASCADE" });
+	TodoList.hasMany(Todo, {
+		foreignKey: "listID",
+		constraints: true,
+		foreignKeyConstraint: true,
+		onDelete: "CASCADE",
+		as: "Tasks",
+	});
+	Todo.belongsTo(TodoList, {
+		constraints: true,
+		foreignKeyConstraint: true,
+		onDelete: "CASCADE",
+	});
 
 	sequelize.sync({ force: true });
 };
@@ -80,13 +91,15 @@ const addTodo = async (username, todo) => {
 	if (foundedList == null) {
 		return { status: 400 }; //TODO
 	}
-	const newTodo = await Todo.create(todo);
+	todo.listID = foundedList.id;
+	let newTodo = await Todo.create(todo);
 	if (newTodo == null) {
 		return { status: 400 }; //TODO
 	}
-
 	const updatedList = await TodoList.update(
-		{ todos: sequelize.fn("array_append", sequelize.col("todos"), newTodo.id) },
+		{
+			todos: sequelize.fn("array_append", sequelize.col("todos"), newTodo.id),
+		},
 		{ where: { id: foundedList.id } }
 	);
 
@@ -96,6 +109,101 @@ const addTodo = async (username, todo) => {
 
 	return newTodo;
 };
+const getTodo = async (user, todoID) => {
+	const foundedTodo = await Todo.findOne({ where: { id: todoID } });
+	//const foundedList = await TodoList.findOne({where:{name:user.name}})
+	if (foundedTodo == null) {
+		return { status: 400 };
+	}
+	return foundedTodo;
+};
+const getAllTodos = async (user, orderField, orderCondition) => {
+	const foundedTodoList = await TodoList.findOne({
+		where: { username: user.name },
+		include: [{ association: "Tasks" }],
+		// order: [[{ association: "Tasks", as: "todos" }, "id", "DESC"]],
+	});
+
+	// return foundedTodoList.Tasks;
+	return orderTodos(foundedTodoList.Tasks, orderField, orderCondition);
+};
+const orderTodos = (todos, orderBy, cond) => {
+	let result;
+	if (orderBy == "none") return todos;
+	if (orderBy == "priority" && cond == "DESC") {
+		result = todos.sort((a, b) => b.priority - a.priority);
+	}
+	if (orderBy == "priority" && cond == "ASC") {
+		result = todos.sort((a, b) => a.priority - b.priority);
+	}
+	if (orderBy == "date" && cond == "DESC") {
+		result = todos.sort((a, b) => new Date(b.date) - new Date(a.priority));
+	}
+	if (orderBy == "date" && cond == "ASC") {
+		result = todos.sort((a, b) => new Date(a.date) - new Date(b.priority));
+	}
+	return result;
+};
+const changeTodoStatus = async (todoID, status) => {
+	const result = await Todo.update({ status }, { where: { id: todoID } });
+	return result;
+};
+const getFilteredTodos = async (user, filterBy, filterValue) => {
+	let result;
+	if (filterBy == "priority") {
+		result = await TodoList.findOne({
+			where: {
+				username: user.name,
+			},
+			include: [
+				{
+					association: "Tasks",
+					as: "Tasks",
+					where: {
+						priority: filterValue,
+					},
+				},
+			],
+		});
+	}
+	if (filterBy == "date") {
+		result = await TodoList.findOne({
+			where: {
+				username: user.name,
+			},
+			include: [
+				{
+					association: "Tasks",
+					as: "Tasks",
+					where: {
+						date: filterValue,
+					},
+				},
+			],
+		});
+	}
+
+	if (filterBy == "status") {
+		result = await TodoList.findOne({
+			where: {
+				username: user.name,
+			},
+			include: [
+				{
+					association: "Tasks",
+					as: "Tasks",
+					where: {
+						status: filterValue,
+					},
+				},
+			],
+		});
+	}
+	console.log("************************: ", result);
+	console.log("**********&&&&&&&&&&&: ", result.Tasks);
+	// console.log("**********&&&&&&&&&&&: ", result.Tasks);
+	return result.Tasks;
+};
 module.exports = {
 	DBConnection,
 	AddUser,
@@ -104,5 +212,9 @@ module.exports = {
 	getAll,
 	AddTodoList,
 	addTodo,
+	getTodo,
+	getAllTodos,
+	changeTodoStatus,
+	getFilteredTodos,
 	sequelize,
 };

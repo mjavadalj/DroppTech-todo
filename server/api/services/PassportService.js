@@ -13,7 +13,7 @@ module.exports.applyPassportStrategy = (passport) => {
 	passport.use(
 		new Strategy(options, async (payload, done) => {
 			const foundedUser = await DBService.findUserByName(payload.name);
-			console.log("Passport Auth user: ", foundedUser);
+			// console.log("Passport Auth user: ", foundedUser);
 			if (foundedUser == null) {
 				return done(null, false);
 			} else {
