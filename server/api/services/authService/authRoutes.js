@@ -7,7 +7,4 @@ const validation = require("../../Middlewares/authServiceValidations");
 
 router.post("/signup", validation.signUp, authController.signUp);
 router.post("/login", validation.login, authController.login);
-router.get("/test", passport.authenticate("jwt", { session: false }), () => {
-	DBService.getAll();
-});
 module.exports = router;

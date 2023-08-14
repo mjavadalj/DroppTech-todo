@@ -1,4 +1,4 @@
-const { check } = require("express-validator");
+const { check, validationResult } = require("express-validator");
 
 exports.addTodo = [
 	check("todo.listID")
@@ -73,3 +73,12 @@ exports.getFilteredTodos = [
 		.withMessage("filterBy must be status or priority or date"),
 	check("filterValue").notEmpty().withMessage("filterValue is empty"),
 ];
+
+exports.validatorCheck = (req, res) => {
+	var err = validationResult(req);
+	if (!err.isEmpty()) {
+		return res.status(400).json({ err });
+	} else {
+		return false;
+	}
+};

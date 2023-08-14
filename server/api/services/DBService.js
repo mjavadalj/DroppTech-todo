@@ -62,7 +62,10 @@ const AddUser = async (user) => {
 };
 
 const UpdateUser = async (user, updateObject) => {
-	const newUser = await User.update(updateObject, { where: { name: user.name } });
+	const newUser = await User.update(updateObject, {
+		where: { name: user.name },
+		returning: true,
+	});
 
 	// const
 	return newUser;
@@ -139,7 +142,7 @@ const orderTodos = (todos, orderBy, cond) => {
 	return result;
 };
 const changeTodoStatus = async (todoID, status) => {
-	const result = await Todo.update({ status }, { where: { id: todoID } });
+	const result = await Todo.update({ status }, { where: { id: todoID }, returning: true });
 	return result;
 };
 const getFilteredTodos = async (user, filterBy, filterValue) => {
