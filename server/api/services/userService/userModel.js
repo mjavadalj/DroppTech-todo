@@ -5,14 +5,18 @@ const sequelize = DBService.sequelize;
 const User = sequelize.define(
 	"User",
 	{
-		id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+		id: { type: DataTypes.INTEGER, autoIncrement: true },
 		name: {
 			type: DataTypes.STRING,
+			primaryKey: true,
 			allowNull: false,
 		},
 		password: {
 			type: DataTypes.STRING,
 			allowNull: false,
+		},
+		todoList: {
+			type: DataTypes.INTEGER,
 		},
 	},
 	{

@@ -14,4 +14,9 @@ module.exports.signUp = async (req, res) => {
 		});
 	}
 };
-module.exports.login = async (req, res) => {};
+module.exports.login = async (req, res) => {
+	const result = await Auth.login(req.body.user);
+	return res.status(200).json({
+		result,
+	});
+};
