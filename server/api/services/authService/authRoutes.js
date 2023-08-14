@@ -3,10 +3,11 @@ const authController = require("./authController");
 const DBService = require("../DBService");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
-router.post("/signup", authController.signUp);
-router.post("/login", authController.login);
+const validation = require("../../Middlewares/authServiceValidations");
+
+router.post("/signup", validation.signUp, authController.signUp);
+router.post("/login", validation.login, authController.login);
 router.get("/test", passport.authenticate("jwt", { session: false }), () => {
-	console.log("*********************************");
 	DBService.getAll();
 });
 module.exports = router;

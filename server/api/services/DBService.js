@@ -70,17 +70,11 @@ const UpdateUser = async (user, updateObject) => {
 const AddTodoList = async (user) => {
 	const newList = await TodoList.create({ username: user.name });
 
-	// const lg = await TodoList.findOne({
-	// 	where: { username: user.name },
-	// 	include: "User",
-	// });
-	// console.log("***", lg);
 	return newList;
 };
 
 const getAll = async () => {
 	const usersr = await TodoList.findAll({});
-	console.log(usersr);
 };
 const findUserByName = async (username) => {
 	const foundedUser = await User.findOne({ where: { name: username } });
@@ -199,9 +193,6 @@ const getFilteredTodos = async (user, filterBy, filterValue) => {
 			],
 		});
 	}
-	console.log("************************: ", result);
-	console.log("**********&&&&&&&&&&&: ", result.Tasks);
-	// console.log("**********&&&&&&&&&&&: ", result.Tasks);
 	return result.Tasks;
 };
 module.exports = {
