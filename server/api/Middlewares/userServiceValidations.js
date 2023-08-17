@@ -1,12 +1,7 @@
 const { check, validationResult } = require("express-validator");
 
 exports.addTodo = [
-	check("todo.listID")
-		.notEmpty()
-		.withMessage("list ID is empty")
-		.isInt()
-		.withMessage("list ID must be Int"),
-	check("todo.tilte")
+	check("todo.title")
 		.notEmpty()
 		.withMessage("title is empty")
 		.isString()
@@ -59,7 +54,7 @@ exports.changeTodoStatus = [
 		.withMessage("status is empty")
 		.isString()
 		.withMessage("status must be string")
-		.isIn(["OPEN", "CLOSE"])
+		.isIn(["OPEN", "CLOSED"])
 		.withMessage("status must be OPEN or CLOSE"),
 ];
 

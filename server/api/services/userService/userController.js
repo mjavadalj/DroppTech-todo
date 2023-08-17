@@ -39,17 +39,9 @@ module.exports.changeTodoStatus = async (req, res) => {
 
 module.exports.getFilteredTodos = async (req, res) => {
 	if (!validatorCheck(req, res)) {
-		var err = validationResult(req);
-		if (!err.isEmpty()) {
-			console.log(err.mapped());
-			return res.status(400).json({ err });
-		} else {
-			// you pass req and res on to your controller
-
-			const result = await User.getFilteredTodos(req);
-			return res.status(200).json({
-				result: result,
-			});
-		}
+		const result = await User.getFilteredTodos(req);
+		return res.status(200).json({
+			result: result,
+		});
 	}
 };
